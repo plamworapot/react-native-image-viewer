@@ -48,29 +48,28 @@ export default class ImageViewer extends React.Component<Props, State> {
 
   private imageRefs: any[] = [];
 
-  public componentWillMount() {
+  public componentDidMount() {
     this.init(this.props);
   }
 
-  public componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.index !== this.state.currentShowIndex) {
-      this.setState(
-        {
-          currentShowIndex: nextProps.index
-        },
-        () => {
-          // 立刻预加载要看的图
-          this.loadImage(nextProps.index || 0);
+  static getDerivedStateFromProps(props: Props, state: State) {
+    if (props.index !== state.currentShowIndex) {
+      return {
+         currentShowIndex: props.index
+      }
+    }
+  }
 
-          this.jumpToCurrentImage();
+  public componentDidUpdate(prevProps: Props, prevState: State) {
+    if (prevProps.index !== prevState.currentShowIndex) {
+        this.loadImage(prevProps.index || 0);
+        this.jumpToCurrentImage();
 
-          // 显示动画
-          Animated.timing(this.fadeAnim, {
-            toValue: 1,
-            duration: 200
-          }).start();
-        }
-      );
+        // 显示动画
+        Animated.timing(this.fadeAnim, {
+          toValue: 1,
+          duration: 200
+        }).start();
     }
   }
 
